@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+    
+    <ui:composition template="../templates/templatePergunta.xhtml">
+        
+        <ui:define name="head">
+            
+        </ui:define>
+        
+        <ui:define name="body">
+                
+                <h:form id="form">
+                    
+                    <center>
+                        <h2 style="color:#FFFFFF;">Resultado</h2>
+                    </center>
+                    
+                    <ui:repeat var="pr" value="#{questionarioController.perguntasRespondidas}" 
+                        varStatus="status">
+
+                        <p:panelGrid columns="3" styleClass="fundoTransparente">
+                            <p:commandButton value="Explicação" onclick="PF('dlgExplicacao').show();" 
+                                actionListener="#{questionarioController.carregarExplicacao(pr.id)}" 
+                                update=":formExp" process="@this, :formExp" />
+                            <p:outputLabel value="Pergunta #{pr.indice}: " styleClass="pergunta" />
+                            <p:outputLabel value="Acertou" rendered="#{pr.acertou == true}" styleClass="pergunta" />
+                            <p:outputLabel value="Errou  " rendered="#{pr.acertou == false}" styleClass="pergunta" />
+                        </p:panelGrid>
+                        
+                        <p:separator />
+                        
+                    </ui:repeat>
+                    
+                    <center>
+                        <p:panelGrid columns="2" style="float:right;" styleClass="fundoTransparente">
+                            <p:outputLabel value="Pontuação rodada: " styleClass="pergunta" />
+                            <p:outputLabel value="#{questionarioController.jogador.pontuacaoAtual}" styleClass="pergunta" /> 
+                            <p:outputLabel value="Potuação total: " styleClass="pergunta" />
+                            <p:outputLabel value="#{questionarioController.jogador.pontuacaoTotal}" styleClass="pergunta" />
+                        </p:panelGrid>
+                    </center>
+                    
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    
+                    <center>
+                        <p:commandButton value="Início" icon="ui-icon-close" 
+                            action="#{jogoController.finalizarJogo()}" />
+                    </center>
+                    
+                </h:form>
+            
+            <p:dialog widgetVar="dlgExplicacao" resizable="false" draggable="false" 
+                modal="false" width="auto" height="auto" header="Explicação" closable="false">
+
+                <h:form id="formExp">
+
+                    <center>
+
+                        <p:outputLabel value="#{questionarioController.explicacao}" />
+
+                        <p:separator />
+
+                        <p:panelGrid columns="1" styleClass="semBorda">
+                            <p:commandButton value="Fechar" icon="ui-icon-close" 
+                                onclick="PF('dlgExplicacao').hide();" process="@this" />
+                        </p:panelGrid>
+
+                    </center>
+                </h:form>
+
+            </p:dialog>
+            
+        </ui:define>
+        
+    </ui:composition>
+    
+</html>

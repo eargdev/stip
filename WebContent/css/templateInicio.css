@@ -1,0 +1,66 @@
+.version.index /* version checker */
+{
+    color: #0000E6;
+    background-color: #F710AD;
+}
+
+.html
+{
+    background-color: #FFFFFF;
+}
+
+#page
+{
+    z-index: 1;
+    width: 960px;
+    height: 576px;
+    border-style: none;
+    border-color: #000000;
+    padding-bottom: 62px;
+    margin-left: auto;
+    margin-right: auto;
+    background: transparent url("../imgs/lousa.png") no-repeat center center;
+}
+
+#u78
+{
+    z-index: 2;
+    width: 172px;
+    height: 553px;
+    //border-width: 1px;
+    //border-style: solid;
+    //border-color: #000000;
+    //background-color: #0000FF;
+    position: relative;
+    margin-right: -10000px;
+    margin-top: 20px;
+    left: 101px;
+}
+
+#u93
+{
+    z-index: 3;
+    width: 575px;
+    height: 553px;
+    //border-width: 1px;
+    //border-style: solid;
+    //border-color: #000000;
+    //background-color: #FF0000;
+    position: relative;
+    margin-right: -10000px;
+    margin-top: 20px;
+    left: 281px;
+}
+
+body
+{
+    position: relative;
+    min-width: 960px;
+    padding-top: 36px;
+    padding-bottom: 36px;
+}
+
+#page .verticalspacer
+{
+    clear: both;
+}

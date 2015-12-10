@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+    
+    <ui:composition template="../templates/templatePergunta.xhtml">
+        
+        <ui:define name="head">
+            
+        </ui:define>
+        
+        <ui:define name="body">
+            <p:outputPanel autoUpdate="true">
+                <!--<p:outputLabel value="teste2: #{questionarioController.jogador.nome}" />-->
+                
+                <h:form id="form">
+                    
+                    <p:growl id="msg" showDetail="false" />
+                    
+                    <p:outputLabel value="#{questionarioController.perguntaVerif.pergunta}" styleClass="pergunta" />
+                    
+                    <br />
+                    <br />
+                    
+                    <p:selectOneRadio value="#{questionarioController.respostaVerif}" 
+                        layout="grid" columns="1" required="true" 
+                        requiredMessage="Selecione uma alternativa!" 
+                        styleClass="resposta">
+
+                        <f:selectItems value="#{questionarioController.perguntaVerif.alternativas}" 
+                            var="atn" itemLabel="#{atn.resposta}" itemValue="#{atn.id}" />
+                    </p:selectOneRadio>
+                    
+                    <br />
+                    <br />
+                    
+                    <p:commandButton value="Responder" action="#{questionarioController.responderQuestaoVerif()}" 
+                        update=":form:msg" disabled="#{questionarioController.fimRodadaVerif == true}" />
+                </h:form>  
+                
+            </p:outputPanel>
+            
+            <p:dialog widgetVar="dlgFimRodada" resizable="false" draggable="false" 
+                modal="false" width="auto" height="auto" header="Fim da Rodada">
+                
+                <p:outputPanel autoUpdate="true">
+                
+                    <h:form id="formFimRodada">
+
+                        <center>
+
+                            <p:panelGrid columns="2" styleClass="semBorda">
+                                <p:outputLabel value="Jogador: " />
+                                <p:outputLabel value="#{questionarioController.jogadorLogado.nome}" /> 
+                                <p:outputLabel value="Nível: " />
+                                <p:outputLabel value="#{questionarioController.jogador.nivel}" />
+                            </p:panelGrid>
+
+                            <p:separator />
+
+                            <p:panelGrid columns="4" styleClass="semBorda">
+                                <p:commandButton value="Continuar" icon="ui-icon-close" 
+                                    action="#{jogoController.iniciarJogo()}" />
+                                
+                                <p:commandButton value="Início" icon="ui-icon-close" 
+                                    action="#{jogoController.finalizarJogo()}" />
+                            </p:panelGrid>
+                        </center>
+                    </h:form>
+                    
+                </p:outputPanel>
+                
+            </p:dialog>
+        </ui:define>
+        
+    </ui:composition>
+    
+</html>

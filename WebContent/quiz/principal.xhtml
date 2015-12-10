@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+    
+    <ui:composition template="../templates/templateInicio.xhtml">
+        
+        <ui:define name="head">
+            
+        </ui:define>
+        
+        <ui:define name="bodyLeft">
+            <center>
+                <p:panelGrid columns="1" style="margin-top:51px;" styleClass="fundoTransparente">
+                    <p:commandButton value="JOGAR" style="width:120px;" action="#{jogoController.iniciarJogo()}" />
+                    <p:commandButton value="CADASTRO" style="width:120px;" 
+                        onclick="PF('dlgCadastro').show();" 
+                        disabled="#{questionarioController.jogadorLogado.id > 0}" />
+                    <p:commandButton value="TUTORIAL" style="width:120px;" disabled="true" />
+                    <p:commandButton value="SOBRE" style="width:120px;" onclick="PF('dlgSobre').show();" />
+                    
+                    <h:inputHidden />
+                    <h:inputHidden />
+                    <h:inputHidden />
+                    
+                    <p:outputLabel value="LOGADO COMO: #{questionarioController.jogadorLogado.nome}" 
+                        style="color:#FFFFFF;" rendered="#{questionarioController.jogadorLogado.id != null}" />
+                    <p:commandButton value="SAIR" style="width:120px;" 
+                        action="#{questionarioController.finalizarJogo2()}" 
+                        rendered="#{questionarioController.jogadorLogado.id != null}" />
+                </p:panelGrid>
+            </center>
+        </ui:define>
+        
+        <ui:define name="bodyRight">
+            <h:form id="form">
+                
+                <p:growl id="msg" showDetail="false" />
+                
+                <h1 style="color:#FFFFFF;">Ranking</h1>
+                
+                <p:dataTable id="tabela" value="#{principalController.listarRanking()}" 
+                    var="rk" rows="10" emptyMessage="Nenhum jogador">
+                    
+                    <p:column style="width:10%;">
+                        <p:outputLabel value="#{rk.colocacao}" />
+                    </p:column>
+                    
+                    <p:column headerText="Jogador">
+                        <p:outputLabel value="#{rk.nome}" />
+                    </p:column>
+                    
+                    <p:column headerText="Pontuação">
+                        <p:outputLabel value="#{rk.pontuacaoTotal}" />
+                    </p:column>
+                </p:dataTable>
+                
+                <p:panelGrid columns="1" style="float:right;" styleClass="fundoTransparente">
+                    <h4 style="color:#FFFFFF;">Total de jogadores: #{principalController.listarQtdJogadores()}</h4>
+                    <h4 style="color:#FFFFFF; margin-top:-10px;">Total de partidas: #{principalController.listarQtdJogosRealizados()}</h4>
+                </p:panelGrid>
+                
+            </h:form>
+            
+            <p:dialog widgetVar="dlgCadastro" resizable="false" draggable="false" 
+                modal="false" width="400" height="auto" header="Cadastro">
+                
+                <h:form id="formCadastro">
+                    
+                    <center>
+                    
+                        <p:panelGrid columns="2" styleClass="semBorda">
+                        
+                            <p:outputLabel value="Jogador: " />
+                            <p:inputText value="#{jogoController.jogadorCad.nome}" 
+                                maxlength="16" size="20" required="true" 
+                                requiredMessage="Informe o nome de joigador." />
+                            <p:outputLabel value="Email: " />
+                            <p:inputText value="#{jogoController.jogadorCad.email}" 
+                                maxlength="32" size="30" required="true" 
+                                requiredMessage="Informe o email." />
+                            <p:outputLabel value="Senha: " />
+                            <p:inputText value="#{jogoController.jogadorCad.senha}" 
+                                maxlength="16" size="20" required="true" 
+                                requiredMessage="Informe a senha." />
+                        
+                        </p:panelGrid>
+                        
+                        <p:separator />
+                        
+                        <p:panelGrid columns="2" styleClass="semBorda">
+                            <p:commandButton value="Cadastrar" icon="ui-icon-close" 
+                                action="#{jogoController.cadastrarJogador()}" 
+                                update=":form:msg" process="@this, :formCadastro" />
+                            <p:commandButton value="Fechar" icon="ui-icon-close" 
+                                onclick="PF('dlgCadastro').hide();" process="@this" />
+                        </p:panelGrid>
+                    </center>
+                </h:form>
+                
+            </p:dialog>
+            
+            <p:dialog widgetVar="dlgSobre" resizable="false" draggable="false" 
+                modal="false" width="400" height="auto" header="Sobre">
+                
+                <h:form id="formSobre">
+                    
+                    <center>
+                    
+                        <p:outputLabel value="Sobre" />
+                        
+                        <p:separator />
+                        
+                        <p:panelGrid columns="2" styleClass="semBorda">
+                            <p:commandButton value="Fechar" icon="ui-icon-close" 
+                                onclick="PF('dlgSobre').hide();" process="@this" />
+                        </p:panelGrid>
+                    </center>
+                </h:form>
+                
+            </p:dialog>
+            
+        </ui:define>
+        
+    </ui:composition>
+    
+</html>

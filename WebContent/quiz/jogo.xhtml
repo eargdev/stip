@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+    
+    <ui:composition template="../templates/templatePergunta.xhtml">
+        
+        <ui:define name="head">
+            
+        </ui:define>
+        
+        <ui:define name="body">
+            <p:outputPanel autoUpdate="true">
+                <!--<p:outputLabel value="teste2: #{questionarioController.jogador.nome}" />-->
+                
+                <h:form id="form">
+                    
+                    <p:growl id="msg" showDetail="false" />
+                    
+                    <p:outputLabel value="#{questionarioController.pergunta.pergunta}" styleClass="pergunta" />
+                    
+                    <br />
+                    <br />
+                    
+                    <p:selectOneRadio value="#{questionarioController.resposta}" 
+                        layout="grid" columns="1" required="true" 
+                        requiredMessage="Selecione uma alternativa!" 
+                        styleClass="resposta">
+
+                        <f:selectItems value="#{questionarioController.pergunta.alternativas}" 
+                            var="atn" itemLabel="#{atn.resposta}" itemValue="#{atn.id}" />
+                    </p:selectOneRadio>
+                    
+                    <br />
+                    <br />
+                    
+                    <p:commandButton value="Responder" action="#{questionarioController.responderQuestao()}" 
+                        update=":form:msg" disabled="#{questionarioController.fimRodada == true}" 
+                        rendered="#{questionarioController.pronto == 1}" />
+                </h:form>  
+                
+            </p:outputPanel>
+            
+            <p:dialog widgetVar="dlgJogar" resizable="false" draggable="false" 
+                modal="false" width="auto" height="auto" header="Novo Jogo" 
+                visible="#{questionarioController.pronto == 0}">
+                
+                <h:form id="formJogar">
+                    
+                    <center>
+                    
+                        <p:panelGrid columns="2" styleClass="semBorda">
+                            <p:outputLabel value="Jogador: " />
+                            <p:inputText maxlength="16" size="32" value="#{questionarioController.jogador.nome}" 
+                                required="true" requiredMessage="Informe o jogador." /> 
+                            <p:outputLabel value="Senha: " />
+                            <p:password maxlength="16" size="32" value="#{questionarioController.jogador.senha}" 
+                                required="true" requiredMessage="Informe a senha." />
+                        </p:panelGrid>
+                        
+                        <p:separator />
+                        
+                        <p:panelGrid columns="4" styleClass="semBorda">
+                            <p:commandButton value="Ok" icon="ui-icon-close" 
+                                action="#{questionarioController.login()}" update=":form:msg" />
+                            
+                            <p:commandButton value="Início" icon="ui-icon-close" 
+                                action="#{jogoController.finalizarJogo()}" process="@this" />
+                        </p:panelGrid>
+                    </center>
+                </h:form>
+                
+            </p:dialog>
+            
+            <p:dialog widgetVar="dlgFimRodada" resizable="false" draggable="false" 
+                modal="false" width="auto" height="auto" header="Fim da Rodada">
+                
+                <p:outputPanel autoUpdate="true">
+                
+                    <h:form id="formFimRodada">
+
+                        <center>
+
+                            <p:panelGrid columns="2" styleClass="semBorda">
+                                <p:outputLabel value="Jogador: " />
+                                <p:outputLabel value="#{questionarioController.jogadorLogado.nome}" /> 
+                                <p:outputLabel value="Nível: " />
+                                <p:outputLabel value="#{questionarioController.jogadorLogado.nivel}" /> 
+                                <p:outputLabel value="Pontuação rodada: " />
+                                <p:outputLabel value="#{questionarioController.jogador.pontuacaoAtual}" /> 
+                                <p:outputLabel value="Potuação total " />
+                                <p:outputLabel value="#{questionarioController.jogador.pontuacaoTotal}" /> 
+                            </p:panelGrid>
+
+                            <p:separator />
+
+                            <p:panelGrid columns="4" styleClass="semBorda">
+                                <p:commandButton value="Respostas" icon="ui-icon-close" 
+                                    action="#{jogoController.exibirRespostas()}" />
+
+                                <p:commandButton value="Início" icon="ui-icon-close" 
+                                    action="#{jogoController.finalizarJogo()}" />
+                                
+                                <p:commandButton value="Sair" icon="ui-icon-close" 
+                                    action="#{questionarioController.finalizarJogo()}" />
+                            </p:panelGrid>
+                        </center>
+                    </h:form>
+                    
+                </p:outputPanel>
+                
+            </p:dialog>
+            
+            <p:dialog widgetVar="dlgAvisoVerifNivel" resizable="false" draggable="false" 
+                modal="false" width="auto" height="auto" header="Atenção" closable="false">
+                
+                <p:outputPanel autoUpdate="true">
+                
+                    <h:form id="formAvVerifNivel">
+
+                        <center>
+
+                            <p:panelGrid columns="2" styleClass="semBorda">
+                                <p:outputLabel value="verif nivel" />
+                            </p:panelGrid>
+
+                            <p:separator />
+
+                            <p:panelGrid columns="4" styleClass="semBorda">
+                                <p:commandButton value="Ok" icon="ui-icon-close" 
+                                    action="#{jogoController.questionarioNivel()}" />
+
+                                <p:commandButton value="Início" icon="ui-icon-close" 
+                                    action="#{jogoController.finalizarJogo()}" />
+                            </p:panelGrid>
+                        </center>
+                    </h:form>
+                    
+                </p:outputPanel>
+                
+            </p:dialog>
+        </ui:define>
+        
+    </ui:composition>
+    
+</html>

@@ -354,10 +354,10 @@ public class QuestionarioController {
         
         Integer nivel = 0;
         
-        if(pontuacaoVerif == 10) {
+        if(pontuacaoVerif >= 30) {
             nivel = 3;
         } else {
-            if(pontuacaoVerif > 5) {
+            if(pontuacaoVerif >= 15 && pontuacaoVerif < 30) {
                 nivel = 2;
             } else {
                 nivel = 1;
@@ -416,10 +416,12 @@ public class QuestionarioController {
             System.out.println("NÍVEL PERGUNTA: " + p.getNivel());
             
             if(p.isAcertou()) {
-                pontosPergunta = (100 * (p.getNivel() * 2)) / 10;
+                //pontosPergunta = (100 * (p.getNivel() * 2)) / 10;
+                pontosPergunta = (p.getNivel() * 10);
                 qtdCorretas++;
             } else {
-                pontosPergunta = (50 * (p.getNivel() * 2)) / 10;
+                //pontosPergunta = (50 * (p.getNivel() * 2)) / 10;
+                pontosPergunta = 0;
             }
             
             System.out.println("PONTUAÇÃO PERGUNTA ATUAL: " + pontosPergunta);

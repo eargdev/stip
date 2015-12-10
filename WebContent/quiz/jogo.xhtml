@@ -21,7 +21,7 @@
                     
                     <p:growl id="msg" showDetail="false" />
                     
-                    <p:outputLabel value="#{questionarioController.pergunta.pergunta}" styleClass="pergunta" />
+                    <p:outputLabel value="#{questionarioController.pergunta.pergunta}" styleClass="pergunta" escape="false" />
                     
                     <br />
                     <br />
@@ -125,16 +125,22 @@
                         <center>
 
                             <p:panelGrid columns="2" styleClass="semBorda">
-                                <p:outputLabel value="verif nivel" />
+                                <center>
+                                    <h5> Olá #{questionarioController.jogadorLogado.nome} !
+                                        Seja bem vindo ao STIP. Nesta primeira etapa estaremos <br></br>
+                                        avaliando seu nível para fornecer uma experiência mais agradável para
+                                        você. 
+                                    </h5>
+                                </center>
                             </p:panelGrid>
 
                             <p:separator />
 
                             <p:panelGrid columns="4" styleClass="semBorda">
-                                <p:commandButton value="Ok" icon="ui-icon-close" 
+                                <p:commandButton value="Iniciar" icon="ui-icon-check" 
                                     action="#{jogoController.questionarioNivel()}" />
 
-                                <p:commandButton value="Início" icon="ui-icon-close" 
+                                <p:commandButton value="Principal" icon="ui-icon-close" 
                                     action="#{jogoController.finalizarJogo()}" />
                             </p:panelGrid>
                         </center>

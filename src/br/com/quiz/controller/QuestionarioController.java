@@ -352,6 +352,10 @@ public class QuestionarioController {
             pontuacaoVerif += pontosPergunta;
         }
         
+        //>= 160 : NIVEL 3
+        //>= 90 e <= 160 : NIVEL 2 
+        //>= 160 : NIVEL 1
+        
         Integer nivel = 0;
         
         if(pontuacaoVerif >= 30) {

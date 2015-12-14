@@ -14,10 +14,13 @@ public class Pergunta {
     private byte[] imagem;
     private String explicacao;
     
+    private Assunto assunto;
+
     private Integer indice;
 
     public Pergunta() {
         alternativaCorreta = new Alternativa();
+        assunto = new Assunto();
     }
 
     public Integer getId() {
@@ -98,5 +101,13 @@ public class Pergunta {
 
     public void setIndice(Integer indice) {
         this.indice = indice;
+    }
+
+    public Assunto getAssunto() {
+        return assunto;
+    }
+
+    public void setAssunto(Assunto assunto) {
+        this.assunto = assunto;
     }
 }

@@ -1,11 +1,13 @@
 package br.com.quiz.dao;
 
 import br.com.quiz.factory.ConnectionFactory;
+import br.com.quiz.model.Assunto;
 import br.com.quiz.model.Jogador;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class JogadorDAO {
     
@@ -101,12 +103,11 @@ public class JogadorDAO {
         return j;
     }
     
-    public boolean cadastrarJogador(Jogador jogador) {
+    public boolean cadastrarJogador(Jogador jogador, List<Assunto> assuntos) {
         
         conexao = ConnectionFactory.getConnection();
         
-        String sql = "insert into quiz.jogador(nome, email, senha, nivel, ativo) "
-            + "values (?, ?, ?, 0, true) returning id";
+        String sql = "insert into quiz.jogador(nome, email, senha, ativo) values (?, ?, ?, true) returning id";
         
         try {
             PreparedStatement ps = conexao.prepareStatement(sql);
@@ -119,6 +120,15 @@ public class JogadorDAO {
             
             while(rs.next()) {                
                 idRetorno = rs.getInt("id");
+            }
+            
+            sql = "insert into quiz.jogador_assunto_nivel(id_jogador, id_assunto) values (?, ?)";
+            
+            for(Assunto a : assuntos) {
+                ps = conexao.prepareStatement(sql);
+                ps.setInt(1, idRetorno);
+                ps.setInt(2, a.getId());
+                ps.execute();
             }
             
             sql = "insert into quiz.pontuacao(id_jogador, pontuacao) values (?, 0)";

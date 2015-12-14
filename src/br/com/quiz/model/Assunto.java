@@ -1,9 +1,13 @@
 package br.com.quiz.model;
 
-public class Alternativa {
-
+public class Assunto {
+    
     private Integer id;
     private String descricao;
+
+    public Assunto() {
+        
+    }
 
     public Integer getId() {
         return id;

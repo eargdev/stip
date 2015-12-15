@@ -4,6 +4,8 @@ public class Assunto {
     
     private Integer id;
     private String descricao;
+    private Integer nivelAssunto;
+    private Integer pontuacaoAssunto;
 
     public Assunto() {
         
@@ -23,5 +25,21 @@ public class Assunto {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public Integer getNivelAssunto() {
+        return nivelAssunto;
+    }
+
+    public void setNivelAssunto(Integer nivelAssunto) {
+        this.nivelAssunto = nivelAssunto;
+    }
+
+    public Integer getPontuacaoAssunto() {
+        return pontuacaoAssunto;
+    }
+
+    public void setPontuacaoAssunto(Integer pontuacaoAssunto) {
+        this.pontuacaoAssunto = pontuacaoAssunto;
     }
 }

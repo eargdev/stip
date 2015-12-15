@@ -211,12 +211,12 @@ public class QuestionarioController {
         }
 
         System.out.println("LISTA FACIL: " + listaFacil.size());
-        System.out.println("LISTA MÉDIO: " + listaMedio.size());
-        System.out.println("LISTA DIFÍCIL: " + listaDificil.size());
+        //System.out.println("LISTA MÉDIO: " + listaMedio.size());
+        //System.out.println("LISTA DIFÍCIL: " + listaDificil.size());
 
         Random r = new Random();
-
-        for(int i = 0; i <= 0; i++) {
+        
+        for(int i = 0; i <= 4; i++) {
             Integer posicao = r.nextInt(listaFacil.size());
             Pergunta pa = listaFacil.get(posicao);
 
@@ -224,7 +224,7 @@ public class QuestionarioController {
             listaFacil.remove(pa);
         }
 
-        for(int i = 0; i <= 0; i++) {
+        /*for(int i = 0; i <= 0; i++) {
             Integer posicao = r.nextInt(listaMedio.size());
             Pergunta pa = listaMedio.get(posicao);
 
@@ -238,7 +238,7 @@ public class QuestionarioController {
 
             listaFiltrada.add(pa);
             listaDificil.remove(pa);
-        }
+        }*/
         
         perguntas = listaFiltrada;
     }

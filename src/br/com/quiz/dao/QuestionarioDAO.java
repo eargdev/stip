@@ -40,7 +40,7 @@ public class QuestionarioDAO {
                 p.setExplicacao(rs.getString("explicacao"));
                 
                 p.getAlternativaCorreta().setId(rs.getInt("idalternativa"));
-                p.getAlternativaCorreta().setResposta(rs.getString("resposta"));
+                p.getAlternativaCorreta().setDescricao(rs.getString("resposta"));
 
                 lista.add(p);
             }
@@ -82,7 +82,7 @@ public class QuestionarioDAO {
                 p.setExplicacao(rs.getString("explicacao"));
                 
                 p.getAlternativaCorreta().setId(rs.getInt("idalternativa"));
-                p.getAlternativaCorreta().setResposta(rs.getString("resposta"));
+                p.getAlternativaCorreta().setDescricao(rs.getString("resposta"));
 
                 lista.add(p);
             }
@@ -116,7 +116,7 @@ public class QuestionarioDAO {
             while(rs.next()) {
                 Alternativa a = new Alternativa();
                 a.setId(rs.getInt("id"));
-                a.setResposta(rs.getString("resposta"));
+                a.setDescricao(rs.getString("resposta"));
 
                 lista.add(a);
             }

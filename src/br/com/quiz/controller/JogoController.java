@@ -1,8 +1,11 @@
 package br.com.quiz.controller;
 
 import br.com.quiz.dao.JogadorDAO;
+import br.com.quiz.model.Assunto;
 import br.com.quiz.model.Jogador;
 import br.com.quiz.util.JSFMessageUtil;
+import java.util.ArrayList;
+import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.context.RequestContext;
@@ -45,7 +48,9 @@ public class JogoController {
         
         if(!verifNome && !verifEmail) {
             
-            Boolean gravou = jd.cadastrarJogador(jogadorCad);
+            List<Assunto> lista = new ArrayList<>();
+            
+            Boolean gravou = jd.cadastrarJogador(jogadorCad, lista);
 
             if(gravou) {
                 

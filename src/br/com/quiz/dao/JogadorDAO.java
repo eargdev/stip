@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JogadorDAO {
@@ -179,7 +180,7 @@ public class JogadorDAO {
         return false;
     }
     
-    public Boolean verificaNivelJogador(Integer id) {
+    /*public Boolean verificaNivelJogador(Integer id) {
         
         conexao = ConnectionFactory.getConnection();
         
@@ -200,6 +201,39 @@ public class JogadorDAO {
             
             if(nivel == 0) {
                 nivelZero = true;
+            }
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                conexao.close();
+            } catch(SQLException ex) {
+               ex.printStackTrace();
+            }
+        }
+        return nivelZero;
+    }*/
+    
+    public List<Assunto> verificaNivelJogador(Integer id) {
+        
+        conexao = ConnectionFactory.getConnection();
+        
+        String sql = "select an.*, a.descricao "
+            + "from quiz.jogador_assunto_nivel an "
+            + "join quiz.assunto a on a.id = an.id_assunto "
+            + "where an.id_jogador = ?";
+        
+        List<Assunto> lista = new ArrayList<>();
+        
+        try {
+            PreparedStatement ps = conexao.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            
+            while(rs.next()) {
+                Assunto a = new Assunto();
+                a.setDescricao(rs.getString("descricao"));
+                a.setNivelAssunto(rs.getInt(""));
             }
         } catch(SQLException ex) {
             ex.printStackTrace();

@@ -155,40 +155,47 @@ public class QuestionarioController {
         
         List<Assunto> listaAssuntosJogador = verificaNivelAssJogador();
         
-        for(Assunto as : listaAssuntosJogador) { 
-            System.out.println(as.getId() + " - " + as.getDescricao() 
-                + "\n" + as.getNivelAssunto() 
-                + "\n" + as.getPontuacaoAssunto());
+        for(Assunto as : listaAssuntosJogador) {
+            
         }
     }
     
     public void login() {
         
         JogadorDAO jd = new JogadorDAO();
+        // VERIFICA SE O JOGADOR EXISTE
         Boolean existe = jd.verificaJogador(jogador.getNome());
         
         if(existe) {
             
+            // AUTENTICA JOGADOR
             Jogador jogadorAux = jd.login(jogador);
             
             if(jogadorAux != null) {
                 if(jogadorAux.getAtivo() == true) {
                     
+                    // DADOS DO JOGADOR NA SESSÃO;
                     jogadorLogado = jogadorAux;
                     
                     RequestContext.getCurrentInstance().execute("PF('dlgJogar').hide();");
                     
+                    // VERIFICA SE JA FEZ O QUESTIONÁRIO PRELIMINAR
                     Boolean questIni = verificaQuestIniJogador();
                     
-                    prepararMontagemQuestionario();
-                    
                     if(questIni) {
+                        // CARREGAS AS QUESTÕES DO QUESTIONÁRIO PRELIMINAR
                         carregarQuestoesVerif();
+                        // CARREGA A PRIMEIRA QUESTÃO
                         carregarPerguntaVerif();
                         RequestContext.getCurrentInstance().execute("PF('dlgAvisoVerifNivel').show();");
                     } else {
+                        // PREPARA QUESTIONARIO JOGO
+                        prepararMontagemQuestionario();
+                        // VARIÁVEL DE CONTROLE
                         pronto = 1;
+                        // CARREGAS AS QUESTÕES
                         carregarQuestoes();
+                        // CARREGA A PRIMEIRA QUESTÃO
                         carregarPergunta();
                     }
                 } else {

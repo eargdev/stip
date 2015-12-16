@@ -32,7 +32,7 @@
                         styleClass="resposta">
 
                         <f:selectItems value="#{questionarioController.perguntaVerif.alternativas}" 
-                            var="atn" itemLabel="#{atn.resposta}" itemValue="#{atn.id}" />
+                            var="atn" itemLabel="#{atn.descricao}" itemValue="#{atn.id}" />
                     </p:selectOneRadio>
                     
                     <br />
@@ -55,9 +55,7 @@
 
                             <p:panelGrid columns="2" styleClass="semBorda">
                                 <p:outputLabel value="Jogador: " />
-                                <p:outputLabel value="#{questionarioController.jogadorLogado.nome}" /> 
-                                <p:outputLabel value="Nível: " />
-                                <p:outputLabel value="#{questionarioController.jogador.nivel}" />
+                                <p:outputLabel value="#{questionarioController.jogadorLogado.nome}" />
                             </p:panelGrid>
 
                             <p:separator />

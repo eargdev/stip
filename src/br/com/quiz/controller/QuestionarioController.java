@@ -7,11 +7,14 @@ import java.util.Random;
 import javax.faces.bean.ManagedBean;
 import br.com.quiz.dao.QuestionarioDAO;
 import br.com.quiz.model.Alternativa;
+import br.com.quiz.model.Assunto;
 import br.com.quiz.model.Jogador;
 import br.com.quiz.model.Pergunta;
 import br.com.quiz.model.Questionario;
 import br.com.quiz.util.JSFMessageUtil;
 import br.com.quiz.util.SessionUtil;
+import java.util.HashMap;
+import java.util.Map;
 import javax.faces.bean.SessionScoped;
 import org.primefaces.context.RequestContext;
 
@@ -136,9 +139,25 @@ public class QuestionarioController {
         }
     }
     
-    public boolean verificaNivelJogador() {
+    private boolean verificaQuestIniJogador() {
         JogadorDAO jd = new JogadorDAO();
-        return jd.verificaNivelJogador(jogadorLogado.getId());
+        return jd.verificaQuestIniJogador(jogadorLogado.getId());
+    }
+    
+    private List<Assunto> verificaNivelAssJogador() {
+        JogadorDAO jd = new JogadorDAO();
+        return jd.verificaNivelAssJogador(jogadorLogado.getId());
+    }
+    
+    private void prepararMontagemQuestionario() {
+        
+        List<Assunto> listaAssuntosJogador = verificaNivelAssJogador();
+        
+        for(Assunto as : listaAssuntosJogador) { 
+            System.out.println(as.getId() + " - " + as.getDescricao() 
+                + "\n" + as.getNivelAssunto() 
+                + "\n" + as.getPontuacaoAssunto());
+        }
     }
     
     public void login() {
@@ -157,17 +176,19 @@ public class QuestionarioController {
                     
                     RequestContext.getCurrentInstance().execute("PF('dlgJogar').hide();");
                     
-                    Boolean nivelZero = verificaNivelJogador();
-                    System.out.println("NÍVEL ZERO: " + nivelZero);
+                    Boolean questIni = verificaQuestIniJogador();
+                    System.out.println("QUEST INICIAL: " + questIni);
                     
-                    if(nivelZero) {
+                    prepararMontagemQuestionario();
+                    
+                    if(questIni) {
                         carregarQuestoesVerif();
                         carregarPerguntaVerif();
                         RequestContext.getCurrentInstance().execute("PF('dlgAvisoVerifNivel').show();");
                     } else {
-                        pronto = 1;
-                        carregarQuestoes();
-                        carregarPergunta();
+                        //pronto = 1;
+                        //carregarQuestoes();
+                        //carregarPergunta();
                     }
                 } else {
                     JSFMessageUtil mu = new JSFMessageUtil();
@@ -322,7 +343,7 @@ public class QuestionarioController {
             fimRodadaVerif = true;
             
             gerarPontuacaoVerif();
-            atualizarNivelJogador();
+            atualizaQuestIniJogador();
             
             RequestContext.getCurrentInstance().execute("PF('dlgFimRodada').show();");
         } else {
@@ -336,11 +357,39 @@ public class QuestionarioController {
         Integer qtdCorretas = 0;
         Integer pontosPergunta = 0;
         
+        // KEY(ID ASSUNTO) / QTD ACERTOS
+        Map<Integer, Integer> mapAssuntoAcertos = new HashMap<>();
+        Map<Integer, Integer> mapAssuntoPontos = new HashMap<>();
+        
+        List<Integer> listaIdAssuntoQuest = new ArrayList<>();
+        
+        for(Pergunta p : perguntasVerif) {
+            
+            if(!listaIdAssuntoQuest.contains(p.getAssunto().getId())) {
+                listaIdAssuntoQuest.add(p.getAssunto().getId());
+            }
+        }
+        
+        for(Integer key : listaIdAssuntoQuest) { 
+            mapAssuntoAcertos.put(key, 0);
+        }
+        
+        for(Map.Entry<Integer, Integer> map : mapAssuntoAcertos.entrySet()) {
+            Integer key = map.getKey();
+            Integer valor = map.getValue();
+            
+            System.out.println("KEY: " + key);
+            System.out.println("VALOR: " + valor);
+        }
+        
         for(Pergunta p : perguntasVerif) {
             
             System.out.println("NÍVEL PERGUNTA: " + p.getNivel());
             
             if(p.isAcertou()) {
+                mapAssuntoAcertos.replace(p.getAssunto().getId(), 
+                    mapAssuntoAcertos.get(p.getAssunto().getId()), 
+                    (mapAssuntoAcertos.get(p.getAssunto().getId()) + 1));
                 pontosPergunta = 2;
                 qtdCorretas++;
             } else {
@@ -352,9 +401,16 @@ public class QuestionarioController {
             pontuacaoVerif += pontosPergunta;
         }
         
-        //>= 160 : NIVEL 3
-        //>= 90 e <= 160 : NIVEL 2 
-        //>= 160 : NIVEL 1
+        for(Map.Entry<Integer, Integer> map : mapAssuntoAcertos.entrySet()) {
+            Integer key = map.getKey();
+            Integer valor = map.getValue();
+            
+            System.out.println("KEY2: " + key);
+            System.out.println("VALOR2: " + valor);
+            
+            Integer pontos = calculaPontuacaoAssunto(valor);
+            mapAssuntoPontos.put(key, pontos);
+        }
         
         Integer nivel = 0;
         
@@ -369,7 +425,7 @@ public class QuestionarioController {
         }
         
         jogador.setId(jogadorLogado.getId());
-        jogador.setNivel(nivel);
+        //jogador.setNivel(nivel);
         
         System.out.println("JOGADOR: " + jogadorLogado.getNome());
         System.out.println("PONTUAÇÃO ATUAL: " + pontuacaoVerif);
@@ -378,10 +434,23 @@ public class QuestionarioController {
         System.out.println("NÍVEL CONQUISTADO: " + nivel);
     }
     
-    public void atualizarNivelJogador() {
+    private Integer calculaPontuacaoAssunto(Integer qtdAcertos) {
+        
+        if() {
+            
+        } else if () {
+            
+        } else {
+            
+        }
+        
+        return 0;
+    }
+    
+    public void atualizaQuestIniJogador() {
         
         JogadorDAO jd = new JogadorDAO();
-        jd.alterarNivelJogador(jogador);
+        jd.atualizaQuestIniJogador(jogador);
     }
     
     private void verificaRodada() {

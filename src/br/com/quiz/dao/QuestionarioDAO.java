@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import br.com.quiz.factory.ConnectionFactory;
 import br.com.quiz.model.Alternativa;
+import br.com.quiz.model.Assunto;
 import br.com.quiz.model.Pergunta;
 
 public class QuestionarioDAO {
@@ -19,10 +20,11 @@ public class QuestionarioDAO {
         conexao = ConnectionFactory.getConnection();
 
         String sql = "select p.id as idpergunta, p.pergunta, p.nivel, p.resposta_certa "
-            + "as idresposta, a.resposta, a.id as idalternativa, g.explicacao "
-            + "from quiz.pergunta p "
+            + "as idresposta, a.resposta, a.id as idalternativa, g.explicacao, "
+            + "ass.id as idassunto, ass.descricao as descassunto from quiz.pergunta p "
             + "join quiz.alternativa_pergunta ap on ap.id_pergunta = p.id "
             + "join quiz.alternativa a on a.id = ap.id_alternativa "
+            + "join quiz.assunto ass on ass.id = p.tipo_pergunta "
             + "left join quiz.gabarito g on g.id_pergunta = p.id "
             + "where p.resposta_certa = a.id";
 
@@ -38,7 +40,8 @@ public class QuestionarioDAO {
                 p.setPergunta(rs.getString("pergunta"));
                 p.setNivel(rs.getInt("nivel"));
                 p.setExplicacao(rs.getString("explicacao"));
-                
+                p.getAssunto().setId(rs.getInt("idassunto"));
+                p.getAssunto().setDescricao(rs.getString("descassunto"));
                 p.getAlternativaCorreta().setId(rs.getInt("idalternativa"));
                 p.getAlternativaCorreta().setDescricao(rs.getString("resposta"));
 
@@ -61,10 +64,11 @@ public class QuestionarioDAO {
         conexao = ConnectionFactory.getConnection();
 
         String sql = "select p.id as idpergunta, p.pergunta, p.nivel, p.resposta_certa "
-            + "as idresposta, a.resposta, a.id as idalternativa, g.explicacao "
-            + "from quiz.pergunta p "
+            + "as idresposta, a.resposta, a.id as idalternativa, g.explicacao, "
+            + "ass.id as idassunto, ass.descricao as descassunto from quiz.pergunta p "
             + "join quiz.alternativa_pergunta ap on ap.id_pergunta = p.id "
             + "join quiz.alternativa a on a.id = ap.id_alternativa "
+            + "join quiz.assunto ass on ass.id = p.tipo_pergunta "
             + "left join quiz.gabarito g on g.id_pergunta = p.id "
             + "where p.resposta_certa = a.id and p.nivel = 0";
 
@@ -80,7 +84,8 @@ public class QuestionarioDAO {
                 p.setPergunta(rs.getString("pergunta"));
                 p.setNivel(rs.getInt("nivel"));
                 p.setExplicacao(rs.getString("explicacao"));
-                
+                p.getAssunto().setId(rs.getInt("idassunto"));
+                p.getAssunto().setDescricao(rs.getString("descassunto"));
                 p.getAlternativaCorreta().setId(rs.getInt("idalternativa"));
                 p.getAlternativaCorreta().setDescricao(rs.getString("resposta"));
 
@@ -195,5 +200,36 @@ public class QuestionarioDAO {
                ex.printStackTrace();
             }
         }
+    }
+    
+    public List<Assunto> carregarAssuntosQuestionario() {
+
+        conexao = ConnectionFactory.getConnection();
+        
+        String sql = "select * from quiz.assunto where questionario = true";
+        
+        List<Assunto> lista = new ArrayList<>();
+        
+        try {
+            PreparedStatement ps = conexao.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            while(rs.next()) {
+                Assunto a = new Assunto();
+                a.setId(rs.getInt("id"));
+                a.setDescricao(rs.getString("descricao"));
+                a.setQuestionario(rs.getBoolean("questionario"));
+                lista.add(a);
+            }
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                conexao.close();
+            } catch(SQLException ex) {
+               ex.printStackTrace();
+            }
+        }
+        return lista;
     }
 }

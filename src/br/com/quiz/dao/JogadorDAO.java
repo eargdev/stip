@@ -88,7 +88,7 @@ public class JogadorDAO {
                 j.setNome(rs.getString("nome"));
                 j.setEmail(rs.getString("email"));
                 j.setSenha(rs.getString("senha"));
-                j.setNivel(rs.getInt("nivel"));
+                j.setQuestInicial(rs.getBoolean("quest_inicial"));
                 j.setPontuacaoTotal(rs.getInt("pontuacao"));
                 j.setAtivo(rs.getBoolean("ativo"));
             }
@@ -180,27 +180,21 @@ public class JogadorDAO {
         return false;
     }
     
-    /*public Boolean verificaNivelJogador(Integer id) {
+    public Boolean verificaQuestIniJogador(Integer id) {
         
         conexao = ConnectionFactory.getConnection();
         
-        String sql = "select nivel from quiz.jogador where id = ?";
+        String sql = "select quest_inicial from quiz.jogador where id = ?";
         
-        Boolean nivelZero = false;
+        Boolean questInicial = true;
         
         try {
             PreparedStatement ps = conexao.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             
-            Integer nivel = 0;
-            
             while(rs.next()) {
-                nivel = rs.getInt("nivel");
-            }
-            
-            if(nivel == 0) {
-                nivelZero = true;
+                questInicial = rs.getBoolean("quest_inicial");
             }
         } catch(SQLException ex) {
             ex.printStackTrace();
@@ -211,10 +205,10 @@ public class JogadorDAO {
                ex.printStackTrace();
             }
         }
-        return nivelZero;
-    }*/
+        return questInicial;
+    }
     
-    public List<Assunto> verificaNivelJogador(Integer id) {
+    public List<Assunto> verificaNivelAssJogador(Integer id) {
         
         conexao = ConnectionFactory.getConnection();
         
@@ -232,8 +226,11 @@ public class JogadorDAO {
             
             while(rs.next()) {
                 Assunto a = new Assunto();
+                a.setId(rs.getInt("id_assunto"));
                 a.setDescricao(rs.getString("descricao"));
-                a.setNivelAssunto(rs.getInt(""));
+                a.setNivelAssunto(rs.getInt("nivel_assunto"));
+                a.setPontuacaoAssunto(rs.getInt("pontuacao_nivel"));
+                lista.add(a);
             }
         } catch(SQLException ex) {
             ex.printStackTrace();
@@ -244,19 +241,18 @@ public class JogadorDAO {
                ex.printStackTrace();
             }
         }
-        return nivelZero;
+        return lista;
     }
     
-    public boolean alterarNivelJogador(Jogador jogador) {
+    public boolean atualizaQuestIniJogador(Jogador jogador) {
         
         conexao = ConnectionFactory.getConnection();
         
-        String sql = "update quiz.jogador set nivel = ? where id = ?";
+        String sql = "update quiz.jogador set quest_inicial = false where id = ?";
         
         try {
             PreparedStatement ps = conexao.prepareStatement(sql);
-            ps.setInt(1, jogador.getNivel());
-            ps.setInt(2, jogador.getId());
+            ps.setInt(1, jogador.getId());
             ps.executeUpdate();
             
             conexao.commit();

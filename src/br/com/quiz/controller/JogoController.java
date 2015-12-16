@@ -1,10 +1,10 @@
 package br.com.quiz.controller;
 
 import br.com.quiz.dao.JogadorDAO;
+import br.com.quiz.dao.QuestionarioDAO;
 import br.com.quiz.model.Assunto;
 import br.com.quiz.model.Jogador;
 import br.com.quiz.util.JSFMessageUtil;
-import java.util.ArrayList;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -48,9 +48,10 @@ public class JogoController {
         
         if(!verifNome && !verifEmail) {
             
-            List<Assunto> lista = new ArrayList<>();
+            QuestionarioDAO qd = new QuestionarioDAO();
+            List<Assunto> listaAssQuest = qd.carregarAssuntosQuestionario();
             
-            Boolean gravou = jd.cadastrarJogador(jogadorCad, lista);
+            Boolean gravou = jd.cadastrarJogador(jogadorCad, listaAssQuest);
 
             if(gravou) {
                 
@@ -58,7 +59,7 @@ public class JogoController {
                 
                 RequestContext.getCurrentInstance().execute("PF('dlgCadastro').show();");
                 
-                urlRetorno = "/quiz/jogo.faces?faces-redirect=true";
+                urlRetorno = "/quiz/principal.faces?faces-redirect=true";
             } else {
                 JSFMessageUtil mu = new JSFMessageUtil();
                 mu.alerta("Erro ao realizar cadastro.");

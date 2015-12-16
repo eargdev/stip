@@ -8,7 +8,7 @@ public class Jogador {
     private String senha;
     private Integer pontuacaoAtual;
     private Integer pontuacaoTotal;
-    private Integer nivel;
+    private Boolean questInicial;
     private Boolean ativo;
     
     // CONTADOR TABELA
@@ -66,12 +66,12 @@ public class Jogador {
         this.pontuacaoTotal = pontuacaoTotal;
     }
 
-    public Integer getNivel() {
-        return nivel;
+    public Boolean getQuestInicial() {
+        return questInicial;
     }
 
-    public void setNivel(Integer nivel) {
-        this.nivel = nivel;
+    public void setQuestInicial(Boolean questInicial) {
+        this.questInicial = questInicial;
     }
 
     public Boolean getAtivo() {

@@ -6,6 +6,7 @@ public class Assunto {
     private String descricao;
     private Integer nivelAssunto;
     private Integer pontuacaoAssunto;
+    private Boolean questionario;
 
     public Assunto() {
         
@@ -41,5 +42,13 @@ public class Assunto {
 
     public void setPontuacaoAssunto(Integer pontuacaoAssunto) {
         this.pontuacaoAssunto = pontuacaoAssunto;
+    }
+
+    public Boolean getQuestionario() {
+        return questionario;
+    }
+
+    public void setQuestionario(Boolean questionario) {
+        this.questionario = questionario;
     }
 }

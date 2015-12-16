@@ -179,7 +179,6 @@ public class QuestionarioController {
                     RequestContext.getCurrentInstance().execute("PF('dlgJogar').hide();");
                     
                     Boolean questIni = verificaQuestIniJogador();
-                    System.out.println("QUEST INICIAL: " + questIni);
                     
                     prepararMontagemQuestionario();
                     
@@ -188,9 +187,9 @@ public class QuestionarioController {
                         carregarPerguntaVerif();
                         RequestContext.getCurrentInstance().execute("PF('dlgAvisoVerifNivel').show();");
                     } else {
-                        //pronto = 1;
-                        //carregarQuestoes();
-                        //carregarPergunta();
+                        pronto = 1;
+                        carregarQuestoes();
+                        carregarPergunta();
                     }
                 } else {
                     JSFMessageUtil mu = new JSFMessageUtil();

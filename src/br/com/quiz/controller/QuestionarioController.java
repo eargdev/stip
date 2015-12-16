@@ -360,9 +360,10 @@ public class QuestionarioController {
         }
     }
     
+    /** Método que verifica a pontuação do questionário preliminar
+     * @return Map<Integer, Integer> - <Assunto, Pontuação> do jogador 
+     */
     public Map<Integer, Integer> gerarPontuacaoVerif() {
-        
-        Integer qtdCorretas = 0;
         
         Map<Integer, Integer> mapAssuntoAcertos = new HashMap<>();
         Map<Integer, Integer> mapAssuntoNivel = new HashMap<>();
@@ -391,7 +392,6 @@ public class QuestionarioController {
                 if(p.getAssunto().getId().equals(key)) {
                     if(p.isAcertou()) {
                         count++;
-                        qtdCorretas++;
                     }
                 }
             }
@@ -404,27 +404,12 @@ public class QuestionarioController {
         
         jogador.setId(jogadorLogado.getId());
         
-        System.out.println("JOGADOR: " + jogadorLogado.getNome());
-        System.out.println("ACERTOS x PERGUNTAS: " + qtdCorretas + " / " + perguntasVerif.size());
-        
-        for(Map.Entry<Integer, Integer> map : mapAssuntoAcertos.entrySet()) {
-            Integer key = map.getKey();
-            Integer valor = map.getValue();
-            
-            System.out.println("KEY: " + key);
-            System.out.println("ACERTO: " + valor);
-        }
-        
-        for(Map.Entry<Integer, Integer> map : mapAssuntoNivel.entrySet()) {
-            Integer key = map.getKey();
-            Integer valor = map.getValue();
-            
-            System.out.println("KEY: " + key);
-            System.out.println("NIVEL: " + valor);
-        }
         return mapAssuntoNivel;
    }
     
+    /** Método que calcula o nível dos assuntos do jogador no questionario preliminar
+     * @return Integer - Nível do assunto 
+     */
     private Integer calculaNivelAssuntoVerif(Integer qtdAcertos) {
         
         Integer nivel;

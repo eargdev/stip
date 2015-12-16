@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class JogadorDAO {
     
@@ -244,7 +245,7 @@ public class JogadorDAO {
         return lista;
     }
     
-    public boolean atualizaQuestIniJogador(Jogador jogador) {
+    public boolean atualizaQuestIniJogador(Jogador jogador, Map<Integer, Integer> mapNivel) {
         
         conexao = ConnectionFactory.getConnection();
         
@@ -254,6 +255,19 @@ public class JogadorDAO {
             PreparedStatement ps = conexao.prepareStatement(sql);
             ps.setInt(1, jogador.getId());
             ps.executeUpdate();
+            
+            sql = "update quiz.jogador_assunto_nivel set nivel_assunto = ? where id_jogador = ? and id_assunto = ?";
+            
+            ps = conexao.prepareStatement(sql);
+            for(Map.Entry<Integer, Integer> map : mapNivel.entrySet()) {
+                Integer key = map.getKey();
+                Integer valor = map.getValue();
+
+                ps.setInt(1, valor);
+                ps.setInt(2, jogador.getId());
+                ps.setInt(3, key);
+                ps.executeUpdate();
+            }
             
             conexao.commit();
             

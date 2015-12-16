@@ -57,6 +57,8 @@ public class QuestionarioController {
     private Integer resposta = 0;
     // PONTUAÇÃO JOGADOR
     private Integer pontuacao = 0;
+    // PONTUAÇÃO JOGADOR POR ASSUNTO
+    private Map<Integer, Integer> mapAssuntoPontos = new HashMap<>();
     
     /* ====================================================================== */
     
@@ -342,8 +344,8 @@ public class QuestionarioController {
             System.out.println("I " + indexVerif + " / S " + size + " - FIM");
             fimRodadaVerif = true;
             
-            gerarPontuacaoVerif();
-            atualizaQuestIniJogador();
+            Map<Integer, Integer> mapNivel = gerarPontuacaoVerif();
+            atualizaQuestIniJogador(mapNivel);
             
             RequestContext.getCurrentInstance().execute("PF('dlgFimRodada').show();");
         } else {
@@ -352,14 +354,12 @@ public class QuestionarioController {
         }
     }
     
-    public void gerarPontuacaoVerif() {
+    public Map<Integer, Integer> gerarPontuacaoVerif() {
         
         Integer qtdCorretas = 0;
-        Integer pontosPergunta = 0;
         
-        // KEY(ID ASSUNTO) / QTD ACERTOS
         Map<Integer, Integer> mapAssuntoAcertos = new HashMap<>();
-        Map<Integer, Integer> mapAssuntoPontos = new HashMap<>();
+        Map<Integer, Integer> mapAssuntoNivel = new HashMap<>();
         
         List<Integer> listaIdAssuntoQuest = new ArrayList<>();
         
@@ -372,85 +372,71 @@ public class QuestionarioController {
         
         for(Integer key : listaIdAssuntoQuest) { 
             mapAssuntoAcertos.put(key, 0);
+            mapAssuntoNivel.put(key, 0);
         }
+        
+        for(Map.Entry<Integer, Integer> map : mapAssuntoAcertos.entrySet()) {
+            Integer key = map.getKey();
+            Integer valor = map.getValue();
+
+            Integer count = 0;
+            
+            for(Pergunta p : perguntasVerif) {
+                if(p.getAssunto().getId().equals(key)) {
+                    if(p.isAcertou()) {
+                        count++;
+                        qtdCorretas++;
+                    }
+                }
+            }
+            mapAssuntoAcertos.replace(key, valor, count);
+            
+            Integer nivel = calculaNivelAssuntoVerif(count);
+                
+            mapAssuntoNivel.replace(key, 0, nivel);
+        }
+        
+        jogador.setId(jogadorLogado.getId());
+        
+        System.out.println("JOGADOR: " + jogadorLogado.getNome());
+        System.out.println("ACERTOS x PERGUNTAS: " + qtdCorretas + " / " + perguntasVerif.size());
         
         for(Map.Entry<Integer, Integer> map : mapAssuntoAcertos.entrySet()) {
             Integer key = map.getKey();
             Integer valor = map.getValue();
             
             System.out.println("KEY: " + key);
-            System.out.println("VALOR: " + valor);
+            System.out.println("ACERTO: " + valor);
         }
         
-        for(Pergunta p : perguntasVerif) {
-            
-            System.out.println("NÍVEL PERGUNTA: " + p.getNivel());
-            
-            if(p.isAcertou()) {
-                mapAssuntoAcertos.replace(p.getAssunto().getId(), 
-                    mapAssuntoAcertos.get(p.getAssunto().getId()), 
-                    (mapAssuntoAcertos.get(p.getAssunto().getId()) + 1));
-                pontosPergunta = 2;
-                qtdCorretas++;
-            } else {
-                pontosPergunta = 1;
-            }
-            
-            System.out.println("PONTUAÇÃO PERGUNTA ATUAL: " + pontosPergunta);
-            
-            pontuacaoVerif += pontosPergunta;
-        }
-        
-        for(Map.Entry<Integer, Integer> map : mapAssuntoAcertos.entrySet()) {
+        for(Map.Entry<Integer, Integer> map : mapAssuntoNivel.entrySet()) {
             Integer key = map.getKey();
             Integer valor = map.getValue();
             
-            System.out.println("KEY2: " + key);
-            System.out.println("VALOR2: " + valor);
-            
-            Integer pontos = calculaPontuacaoAssunto(valor);
-            mapAssuntoPontos.put(key, pontos);
+            System.out.println("KEY: " + key);
+            System.out.println("NIVEL: " + valor);
         }
+        return mapAssuntoNivel;
+   }
+    
+    private Integer calculaNivelAssuntoVerif(Integer qtdAcertos) {
         
-        Integer nivel = 0;
+        Integer nivel;
         
-        if(pontuacaoVerif >= 30) {
+        if(qtdAcertos <= 2) {
+            nivel = 1;
+        } else if (qtdAcertos > 2 && qtdAcertos <= 4) {
+            nivel = 2;
+        } else {
             nivel = 3;
-        } else {
-            if(pontuacaoVerif >= 15 && pontuacaoVerif < 30) {
-                nivel = 2;
-            } else {
-                nivel = 1;
-            }
         }
-        
-        jogador.setId(jogadorLogado.getId());
-        //jogador.setNivel(nivel);
-        
-        System.out.println("JOGADOR: " + jogadorLogado.getNome());
-        System.out.println("PONTUAÇÃO ATUAL: " + pontuacaoVerif);
-        System.out.println("PERGUNTAS x ACERTOS: " + perguntasVerif.size() + " / " + qtdCorretas);
-        
-        System.out.println("NÍVEL CONQUISTADO: " + nivel);
+        return nivel;
     }
     
-    private Integer calculaPontuacaoAssunto(Integer qtdAcertos) {
-        
-        if() {
-            
-        } else if () {
-            
-        } else {
-            
-        }
-        
-        return 0;
-    }
-    
-    public void atualizaQuestIniJogador() {
+    public void atualizaQuestIniJogador(Map<Integer, Integer> mapNivel) {
         
         JogadorDAO jd = new JogadorDAO();
-        jd.atualizaQuestIniJogador(jogador);
+        jd.atualizaQuestIniJogador(jogador, mapNivel);
     }
     
     private void verificaRodada() {

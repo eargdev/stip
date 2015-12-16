@@ -159,7 +159,6 @@ public class QuestionarioController {
             
         }
     }
-    
     public void login() {
         
         JogadorDAO jd = new JogadorDAO();

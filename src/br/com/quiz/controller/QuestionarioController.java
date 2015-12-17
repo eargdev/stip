@@ -273,10 +273,53 @@ public class QuestionarioController {
     
     private void carregarQuestoesVerif() {
         
+        List<Pergunta> listaFiltrada = new ArrayList<>();
+        
         QuestionarioDAO qdao = new QuestionarioDAO();
         perguntasVerif = qdao.carregarPerguntasVerif();
+        
+        Map<Integer, Pergunta> mapPergunta = new HashMap<>();
+        
+        List<Integer> listaIdAssuntoQuest = new ArrayList<>();
+        
+        for(Pergunta p : perguntasVerif) {
+            
+            if(!listaIdAssuntoQuest.contains(p.getAssunto().getId())) {
+                listaIdAssuntoQuest.add(p.getAssunto().getId());
+            }
+        }
+        
+        for(Integer key : listaIdAssuntoQuest) { 
+            mapPergunta.put(key, new Pergunta());
+        }
+        
+        for(Map.Entry<Integer, Pergunta> map : mapPergunta.entrySet()) {
+            Integer key = map.getKey();
+            Pergunta valor = map.getValue();
 
+            Integer count = 0;
+            
+            for(Pergunta p : perguntasVerif) {
+                if(p.getAssunto().getId().equals(key)) {
+                    count++;
+                    if(count > 4) {
+                        break;
+                    } else {
+                        listaFiltrada.add(p);
+                    }
+                }
+            }
+        }
         System.out.println("QTD PERGUNTAS VERIF:" + perguntasVerif.size());
+        
+        perguntasVerif = null;
+        perguntasVerif = listaFiltrada;
+
+        System.out.println("QTD PERGUNTAS VERIF OK:" + perguntasVerif.size());
+        
+        for(Pergunta p : perguntasVerif) {
+            System.out.println(p.getAssunto().getId());
+        }
     }
     
     private void carregarPergunta() {
@@ -415,7 +458,7 @@ public class QuestionarioController {
         
         if(qtdAcertos <= 2) {
             nivel = 1;
-        } else if (qtdAcertos > 2 && qtdAcertos <= 4) {
+        } else if (qtdAcertos > 2 && qtdAcertos < 4) {
             nivel = 2;
         } else {
             nivel = 3;

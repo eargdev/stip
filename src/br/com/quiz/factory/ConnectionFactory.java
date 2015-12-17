@@ -9,9 +9,13 @@ public class ConnectionFactory {
 
         Connection conexao = null;
 
-        String url = "jdbc:postgresql://localhost:5432/dev";
-        String usuario = "postgres";
-        String senha = "post";
+        //String url = "jdbc:postgresql://localhost:5432/dev";
+        //String usuario = "postgres";
+        //String senha = "post";
+        
+        String url = "jdbc:postgresql://postgresurban.cugu75kgfzau.sa-east-1.rds.amazonaws.com:5432/dev";
+        String usuario = "urban";
+        String senha = "urban15ej";
 
         try {
             Class.forName("org.postgresql.Driver");

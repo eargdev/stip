@@ -180,8 +180,6 @@ public class QuestionarioController {
                         carregarPerguntaVerif();
                         RequestContext.getCurrentInstance().execute("PF('dlgAvisoVerifNivel').show();");
                     } else {
-                        // PREPARA QUESTIONARIO JOGO
-                        prepararMontagemQuestionario();
                         // VARIÁVEL DE CONTROLE
                         pronto = 1;
                         // CARREGAS AS QUESTÕES
@@ -205,12 +203,53 @@ public class QuestionarioController {
 
     private void carregarQuestoes() {
         
-        QuestionarioDAO qdao = new QuestionarioDAO();
-        
-        List<Pergunta> listaPerguntasAux = qdao.carregarPerguntas();
+        List<Pergunta> listaPerguntasAux = prepararMontagemQuestionario();
         List<Pergunta> listaFiltrada = new ArrayList<>();
         
-        List<Pergunta> listaFacil = new ArrayList<>();
+        Map<Integer, Pergunta> mapPergunta = new HashMap<>();
+        
+        List<Integer> listaIdAssuntoQuest = new ArrayList<>();
+        
+        for(Pergunta p : listaPerguntasAux) {
+            
+            if(!listaIdAssuntoQuest.contains(p.getAssunto().getId())) {
+                listaIdAssuntoQuest.add(p.getAssunto().getId());
+            }
+        }
+        
+        for(Integer key : listaIdAssuntoQuest) { 
+            mapPergunta.put(key, new Pergunta());
+        }
+        
+        for(Map.Entry<Integer, Pergunta> map : mapPergunta.entrySet()) {
+            Integer key = map.getKey();
+            Pergunta valor = map.getValue();
+
+            Integer count = 0;
+            
+            for(Pergunta p : listaPerguntasAux) {
+                if(p.getAssunto().getId().equals(key)) {
+                    count++;
+                    if(count > 4) {
+                        break;
+                    } else {
+                        listaFiltrada.add(p);
+                    }
+                }
+            }
+        }
+        System.out.println("QTD PERGUNTAS:" + listaPerguntasAux.size());
+        
+        perguntas = null;
+        perguntas = listaFiltrada;
+        
+        System.out.println("QTD PERGUNTAS OK:" + perguntas.size());
+        
+        for(Pergunta p : perguntasVerif) {
+            System.out.println(p.getAssunto().getId());
+        }
+        
+        /*List<Pergunta> listaFacil = new ArrayList<>();
         List<Pergunta> listaMedio = new ArrayList<>();
         List<Pergunta> listaDificil = new ArrayList<>();
 
@@ -260,29 +299,29 @@ public class QuestionarioController {
             listaDificil.remove(pa);
         }*/
         
-        perguntas = listaFiltrada;
+        //perguntas = listaFiltrada;
     }
     
-    // EMERSON
-    private void prepararMontagemQuestionario() {
+    private List<Pergunta> prepararMontagemQuestionario() {
         
         List<Pergunta> listaPergAux = new ArrayList<>();
         List<Pergunta> listaPergRet = new ArrayList<>();
         
         List<Assunto> listaAssuntosJogador = verificaNivelAssJogador();
         
-        // DAO PRA CARREGAR OS NIVEIS DE PERGUNTA DE ACORDO COM A LISTA ACIMA
-        // FOR QUE VAI INTERAR LISTA = LISTA SEM PERDER OS DADOS ANTERIORES;
-        Map<Integer, Pergunta> mapPergunta = new HashMap<>();
-        
-        List<Integer> listaIdAssuntoQuest = new ArrayList<>();
-        
-        /*for(Pergunta p : listaAssuntosJogador) {
+        QuestionarioDAO qd = new QuestionarioDAO();
+        for(Assunto assunto : listaAssuntosJogador) {
+            listaPergRet = qd.carregarPerguntas(jogadorLogado, assunto);
             
-            if(!listaIdAssuntoQuest.contains(p.getAssunto().getId())) {
-                listaIdAssuntoQuest.add(p.getAssunto().getId());
+            for(Pergunta pg : listaPergRet) {
+                listaPergAux.add(pg);
             }
-        }*/
+        }
+        
+        for(Pergunta pg : listaPergAux) {
+            System.out.println("ID: " + pg.getNivel() + " / NÍVEL PERGUNTA: " + pg.getNivel() + " / ASSUNTO: " + pg.getAssunto().getDescricao());
+        }
+        return listaPergAux;
     }
     
     /** Método que carrega as questões para averiguação do nível inicial de 
@@ -498,8 +537,9 @@ public class QuestionarioController {
             System.out.println("I " + index + " / S " + size + " - FIM");
             fimRodada = true;
             
-            gerarPontuacao();
+            Map<Integer, Assunto> mapAux = gerarPontuacao();
             gravarPontuação();
+            atualizaNivelPontQuest(mapAux);
             atualizarEstatisticas();
             
             RequestContext.getCurrentInstance().execute("PF('dlgFimRodada').show();");
@@ -514,7 +554,94 @@ public class QuestionarioController {
         qd.atualizaEstatisticas();
     }
 
-    public void gerarPontuacao() {
+    public Map<Integer, Assunto> gerarPontuacao() {
+        
+        pontuacao = 0;
+        Integer countGeral = 0;
+        
+        Map<Integer, Integer> mapAssuntoAcertos = new HashMap<>();
+        Map<Integer, Assunto> mapAssuntoNivel = new HashMap<>();
+        
+        List<Integer> listaIdAssuntoQuest = new ArrayList<>();
+        
+        for(Pergunta p : perguntas) {
+            
+            if(!listaIdAssuntoQuest.contains(p.getAssunto().getId())) {
+                listaIdAssuntoQuest.add(p.getAssunto().getId());
+            }
+        }
+        
+        Assunto asx = new Assunto();
+        
+        for(Integer key : listaIdAssuntoQuest) { 
+            mapAssuntoAcertos.put(key, 0);
+            mapAssuntoNivel.put(key, asx);
+        }
+        
+        for(Map.Entry<Integer, Integer> map : mapAssuntoAcertos.entrySet()) {
+            Integer key = map.getKey();
+            Integer valor = map.getValue();
+
+            Integer count = 0;
+            
+            for(Pergunta p : perguntas) {
+                if(p.getAssunto().getId().equals(key)) {
+                    if(p.isAcertou()) {
+                        count++;
+                        countGeral++;
+                    }
+                }
+            }
+            mapAssuntoAcertos.replace(key, valor, count);
+            
+            Assunto asCalculado = calculaNivelAssunto(count);
+            System.out.println(asCalculado.getId() + " - " + asCalculado.getPontuacaoAssunto());
+                
+            mapAssuntoNivel.replace(key, asx, asCalculado);
+        }
+        
+        Integer pontuacaoTotal = jogadorLogado.getPontuacaoTotal();
+        
+        jogador.setId(jogadorLogado.getId());
+        jogador.setPontuacaoAtual(pontuacao);
+        jogador.setPontuacaoTotal(pontuacao + pontuacaoTotal);
+        
+        System.out.println("JOGADOR: " + jogadorLogado.getNome());
+        System.out.println("PONTUAÇÃO ATUAL: " + pontuacao);
+        System.out.println("PONTUAÇÃO TOTAL: " + (pontuacao + pontuacaoTotal));
+        System.out.println("PERGUNTAS x ACERTOS: " + perguntas.size() + " / " + countGeral);
+        
+        return mapAssuntoNivel;
+    }
+    
+    private Assunto calculaNivelAssunto(Integer qtdAcertos) {
+        
+        Assunto as = new Assunto();
+        
+        if(qtdAcertos <= 2) {
+            as.setNivelAssunto(1);
+            as.setPontuacaoAssunto(qtdAcertos * 10);
+        } else if (qtdAcertos > 2 && qtdAcertos < 4) {
+            as.setNivelAssunto(2);
+            as.setPontuacaoAssunto(qtdAcertos * 20);
+        } else {
+            as.setNivelAssunto(3);
+            as.setPontuacaoAssunto(qtdAcertos * 30);
+        }
+        
+        // SCORE DO JOGADOR
+        pontuacao += as.getPontuacaoAssunto();
+        
+        return as;
+    }
+    
+    public void atualizaNivelPontQuest(Map<Integer, Assunto> mapNivel) {
+        
+        JogadorDAO jd = new JogadorDAO();
+        jd.atualizaNivelPontQuest(jogador, mapNivel);
+    }
+    
+    /*public void gerarPontuacao() {
         
         Integer qtdCorretas = 0;
         Integer pontosPergunta = 0;
@@ -548,7 +675,7 @@ public class QuestionarioController {
         System.out.println("PERGUNTAS x ACERTOS: " + perguntas.size() + " / " + qtdCorretas);
         
         System.out.println("LISTA PR: " + perguntasRespondidas.size());
-    }
+    }*/
     
     public void gravarPontuação() {
         

@@ -65,16 +65,24 @@ public class QuestionarioDAO {
 
         conexao = ConnectionFactory.getConnection();
 
-        String sql = "select * from quiz.pergunta p "
-                + "join quiz.assunto ass on ass.id = p.tipo_pergunta "
-                + "join quiz.jogador_assunto_nivel jan on jan.id_assunto = ass.id "
-                + "join quiz.jogador j on j.id = jan.id_jogador "
-                + "where p.nivel = 3 and j.id = 2 and ass.id = 4";
+        String sql = "select p.id as idpergunta, p.pergunta, p.nivel, p.resposta_certa "
+            + "as idresposta, at.resposta, at.id as idalternativa, g.explicacao, "
+            + "ass.id as idassunto, ass.descricao as descassunto "
+            + "from quiz.pergunta p "
+            + "join quiz.assunto ass on ass.id = p.tipo_pergunta "
+            + "join quiz.jogador_assunto_nivel jan on jan.id_assunto = ass.id "
+            + "join quiz.jogador j on j.id = jan.id_jogador "
+            + "join quiz.alternativa at on at.id = p.resposta_certa "
+            + "left join quiz.gabarito g on g.id_pergunta = p.id "
+            + "where p.nivel = ? and j.id = ? and ass.id = ?";
 
         List<Pergunta> lista = new ArrayList<>();
 
         try {
             PreparedStatement ps = conexao.prepareStatement(sql);
+            ps.setInt(1, a.getNivelAssunto());
+            ps.setInt(2, j.getId());
+            ps.setInt(3, a.getId());
             ResultSet rs = ps.executeQuery();
 
             while(rs.next()) {

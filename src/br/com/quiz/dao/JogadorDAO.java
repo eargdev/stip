@@ -283,4 +283,37 @@ public class JogadorDAO {
         }
         return false;
     }
+    
+    public boolean atualizaNivelPontQuest(Jogador jogador, Map<Integer, Assunto> mapNivel) {
+        
+        conexao = ConnectionFactory.getConnection();
+        
+        String sql = "update quiz.jogador_assunto_nivel set pontuacao_nivel = ? where id_jogador = ? and id_assunto = ?";
+        
+        try {
+            PreparedStatement ps = conexao.prepareStatement(sql);
+            for(Map.Entry<Integer, Assunto> map : mapNivel.entrySet()) {
+                Integer key = map.getKey();
+                Assunto valor = map.getValue();
+
+                ps.setInt(1, valor.getPontuacaoAssunto());
+                ps.setInt(2, jogador.getId());
+                ps.setInt(3, key);
+                ps.executeUpdate();
+            }
+            
+            conexao.commit();
+            
+            return true;
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                conexao.close();
+            } catch(SQLException ex) {
+               ex.printStackTrace();
+            }
+        }
+        return false;
+    }
 }

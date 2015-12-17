@@ -11,6 +11,7 @@ import br.com.quiz.model.Alternativa;
 import br.com.quiz.model.Assunto;
 import br.com.quiz.model.Jogador;
 import br.com.quiz.model.Pergunta;
+import br.com.quiz.model.Referencia;
 
 public class QuestionarioDAO {
 
@@ -282,5 +283,53 @@ public class QuestionarioDAO {
             }
         }
         return lista;
+    }
+    
+    public Assunto carregarreferenciasAssunto(Integer idAssunto) {
+
+        conexao = ConnectionFactory.getConnection();
+        
+        String sql = "select re.id, re.link_referencia, ass.id as idassunto, "
+            + "ass.descricao as descassunto from quiz.referencia re "
+            + "join quiz.assunto_referencia ar on ar.id_referencia = re.id "
+            + "join quiz.assunto ass on ass.id = ar.id_assunto where ass.id = ?";
+        
+        Assunto as = new Assunto();
+        List<Referencia> lista = new ArrayList<>();
+        
+        try {
+            PreparedStatement ps = conexao.prepareStatement(sql);
+            ps.setInt(1, idAssunto);
+            ResultSet rs = ps.executeQuery();
+            
+            while(rs.next()) {
+                Referencia r = new Referencia();
+                r.setId(rs.getInt("id"));
+                r.setLinkReferencia(rs.getString("link_referencia"));
+                
+                lista.add(r);
+            }
+            
+            as.setReferencias(lista);
+            
+            ps = conexao.prepareStatement(sql);
+            ps.setInt(1, idAssunto);
+            rs = ps.executeQuery();
+            
+            while(rs.next()) {
+                as.setId(rs.getInt("idassunto"));
+                as.setDescricao(rs.getString("descassunto"));
+            }
+            
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                conexao.close();
+            } catch(SQLException ex) {
+               ex.printStackTrace();
+            }
+        }
+        return as;
     }
 }

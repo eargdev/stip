@@ -1,5 +1,7 @@
 package br.com.quiz.model;
 
+import java.util.List;
+
 public class Assunto {
     
     private Integer id;
@@ -7,6 +9,7 @@ public class Assunto {
     private Integer nivelAssunto;
     private Integer pontuacaoAssunto;
     private Boolean questionario;
+    private List<Referencia> referencias;
 
     public Assunto() {
         
@@ -50,5 +53,13 @@ public class Assunto {
 
     public void setQuestionario(Boolean questionario) {
         this.questionario = questionario;
+    }
+
+    public List<Referencia> getReferencias() {
+        return referencias;
+    }
+
+    public void setReferencias(List<Referencia> referencias) {
+        this.referencias = referencias;
     }
 }

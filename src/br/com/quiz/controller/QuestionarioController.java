@@ -70,6 +70,10 @@ public class QuestionarioController {
     private List<Pergunta> perguntasRespondidas = new ArrayList<>();
     private Integer indice = 1;
     private String explicacao = "";
+    
+    // FEEDBACK
+    private Integer assuntoErro = 0;
+    private Assunto assuntoErroRef = new Assunto();
 
     public String finalizarJogo() {
         index = 0;
@@ -527,6 +531,12 @@ public class QuestionarioController {
         jd.atualizaQuestIniJogador(jogador, mapNivel);
     }
     
+    private void sugerirReferenciasAssunto() {
+        
+        QuestionarioDAO qd = new QuestionarioDAO();
+        assuntoErroRef = qd.carregarreferenciasAssunto(assuntoErro);
+    }
+    
     private void verificaRodada() {
         
         Integer size = perguntas.size();
@@ -541,6 +551,7 @@ public class QuestionarioController {
             gravarPontuação();
             atualizaNivelPontQuest(mapAux);
             atualizarEstatisticas();
+            sugerirReferenciasAssunto();
             
             RequestContext.getCurrentInstance().execute("PF('dlgFimRodada').show();");
         } else {
@@ -560,6 +571,7 @@ public class QuestionarioController {
         Integer countGeral = 0;
         
         Map<Integer, Integer> mapAssuntoAcertos = new HashMap<>();
+        Map<Integer, Integer> mapAssuntoErros = new HashMap<>();
         Map<Integer, Assunto> mapAssuntoNivel = new HashMap<>();
         
         List<Integer> listaIdAssuntoQuest = new ArrayList<>();
@@ -575,6 +587,7 @@ public class QuestionarioController {
         
         for(Integer key : listaIdAssuntoQuest) { 
             mapAssuntoAcertos.put(key, 0);
+            mapAssuntoErros.put(key, 0);
             mapAssuntoNivel.put(key, asx);
         }
         
@@ -583,21 +596,37 @@ public class QuestionarioController {
             Integer valor = map.getValue();
 
             Integer count = 0;
+            Integer countErro = 0;
             
             for(Pergunta p : perguntas) {
                 if(p.getAssunto().getId().equals(key)) {
                     if(p.isAcertou()) {
                         count++;
                         countGeral++;
+                    } else {
+                        countErro++;
                     }
                 }
             }
             mapAssuntoAcertos.replace(key, valor, count);
+            mapAssuntoErros.replace(key, valor, countErro);
             
             Assunto asCalculado = calculaNivelAssunto(count);
             System.out.println(asCalculado.getId() + " - " + asCalculado.getPontuacaoAssunto());
                 
             mapAssuntoNivel.replace(key, asx, asCalculado);
+        }
+        
+        Integer maior = 0;
+        
+        for(Map.Entry<Integer, Integer> map : mapAssuntoErros.entrySet()) {
+            Integer key = map.getKey();
+            Integer valor = map.getValue();
+            
+            if(valor >= maior) {
+                maior = valor;
+                assuntoErro = key;
+            } 
         }
         
         Integer pontuacaoTotal = jogadorLogado.getPontuacaoTotal();
@@ -855,5 +884,13 @@ public class QuestionarioController {
 
     public void setPontuacaoVerif(Integer pontuacaoVerif) {
         this.pontuacaoVerif = pontuacaoVerif;
+    }
+
+    public Assunto getAssuntoErroRef() {
+        return assuntoErroRef;
+    }
+
+    public void setAssuntoErroRef(Assunto assuntoErroRef) {
+        this.assuntoErroRef = assuntoErroRef;
     }
 }

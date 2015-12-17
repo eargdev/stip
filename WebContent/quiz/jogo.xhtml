@@ -92,6 +92,12 @@
                                 <p:outputLabel value="#{questionarioController.jogador.pontuacaoAtual}" /> 
                                 <p:outputLabel value="Potuação total " />
                                 <p:outputLabel value="#{questionarioController.jogador.pontuacaoTotal}" /> 
+                                <p:outputLabel value="Dificuldade em: " />
+                                <p:outputLabel value="#{questionarioController.assuntoErroRef.descricao}" />
+                            </p:panelGrid>
+                            
+                            <p:panelGrid columns="2" styleClass="semBorda">
+                                <p:commandButton value="Sugestões para estudo" />
                             </p:panelGrid>
 
                             <p:separator />

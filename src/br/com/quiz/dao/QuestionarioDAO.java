@@ -9,6 +9,7 @@ import java.util.List;
 import br.com.quiz.factory.ConnectionFactory;
 import br.com.quiz.model.Alternativa;
 import br.com.quiz.model.Assunto;
+import br.com.quiz.model.Jogador;
 import br.com.quiz.model.Pergunta;
 
 public class QuestionarioDAO {
@@ -27,6 +28,48 @@ public class QuestionarioDAO {
             + "join quiz.assunto ass on ass.id = p.tipo_pergunta "
             + "left join quiz.gabarito g on g.id_pergunta = p.id "
             + "where p.resposta_certa = a.id";
+
+        List<Pergunta> lista = new ArrayList<>();
+
+        try {
+            PreparedStatement ps = conexao.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                Pergunta p = new Pergunta();
+                p.setId(rs.getInt("idpergunta"));
+                p.setPergunta(rs.getString("pergunta"));
+                p.setNivel(rs.getInt("nivel"));
+                p.setExplicacao(rs.getString("explicacao"));
+                p.getAssunto().setId(rs.getInt("idassunto"));
+                p.getAssunto().setDescricao(rs.getString("descassunto"));
+                p.getAlternativaCorreta().setId(rs.getInt("idalternativa"));
+                p.getAlternativaCorreta().setDescricao(rs.getString("resposta"));
+
+                lista.add(p);
+            }
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                conexao.close();
+            } catch(SQLException ex) {
+               ex.printStackTrace();
+            }
+        }
+        return lista;
+    }
+    
+    // EMERSON
+    public List<Pergunta> carregarPerguntas(Jogador j, Assunto a) {
+
+        conexao = ConnectionFactory.getConnection();
+
+        String sql = "select * from quiz.pergunta p "
+                + "join quiz.assunto ass on ass.id = p.tipo_pergunta "
+                + "join quiz.jogador_assunto_nivel jan on jan.id_assunto = ass.id "
+                + "join quiz.jogador j on j.id = jan.id_jogador "
+                + "where p.nivel = 3 and j.id = 2 and ass.id = 4";
 
         List<Pergunta> lista = new ArrayList<>();
 

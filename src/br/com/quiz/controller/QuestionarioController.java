@@ -151,14 +151,6 @@ public class QuestionarioController {
         return jd.verificaNivelAssJogador(jogadorLogado.getId());
     }
     
-    private void prepararMontagemQuestionario() {
-        
-        List<Assunto> listaAssuntosJogador = verificaNivelAssJogador();
-        
-        for(Assunto as : listaAssuntosJogador) {
-            
-        }
-    }
     public void login() {
         
         JogadorDAO jd = new JogadorDAO();
@@ -271,6 +263,30 @@ public class QuestionarioController {
         perguntas = listaFiltrada;
     }
     
+    // EMERSON
+    private void prepararMontagemQuestionario() {
+        
+        List<Pergunta> listaPergAux = new ArrayList<>();
+        List<Pergunta> listaPergRet = new ArrayList<>();
+        
+        List<Assunto> listaAssuntosJogador = verificaNivelAssJogador();
+        
+        // DAO PRA CARREGAR OS NIVEIS DE PERGUNTA DE ACORDO COM A LISTA ACIMA
+        // FOR QUE VAI INTERAR LISTA = LISTA SEM PERDER OS DADOS ANTERIORES;
+        Map<Integer, Pergunta> mapPergunta = new HashMap<>();
+        
+        List<Integer> listaIdAssuntoQuest = new ArrayList<>();
+        
+        /*for(Pergunta p : listaAssuntosJogador) {
+            
+            if(!listaIdAssuntoQuest.contains(p.getAssunto().getId())) {
+                listaIdAssuntoQuest.add(p.getAssunto().getId());
+            }
+        }*/
+    }
+    
+    /** Método que carrega as questões para averiguação do nível inicial de 
+     * cada assunto */
     private void carregarQuestoesVerif() {
         
         List<Pergunta> listaFiltrada = new ArrayList<>();
